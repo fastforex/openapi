@@ -5,7 +5,7 @@ info:
   description: "Foreign currency exchange rate API"
   termsOfService: "http://www.fastforex.io/terms-of-sale"
   contact:
-    email: "support@whamsoftware.com"
+    email: "support@fastforex.io"
   license:
     name: "Apache 2.0"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
