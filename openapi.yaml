@@ -313,7 +313,6 @@ paths:
                   YER: 246.27558
                   ZAR: 15.20595
                   ZMW: 21.37472
-                  ZWL: 367.6807
                 updated: '2021-01-16 17:14:51'
                 ms: 13
         "400":
@@ -418,7 +417,7 @@ paths:
                   AFN: Afghan Afghani
                   ALL: Albanian Lek
                   AMD: Armenian Dram
-                  ANG: Netherlands Antillean Guilder
+                  ANG: Dutch Guilders
                   AOA: Angolan Kwanza
                   ARS: Argentine Peso
                   AUD: Australian Dollar
@@ -430,14 +429,14 @@ paths:
                   BGN: Bulgarian Lev
                   BHD: Bahraini Dinar
                   BIF: Burundian Franc
-                  BMD: Bermudan Dollar
-                  BND: Brunei Dollar
+                  BMD: Bermudian Dollar
+                  BND: Bruneian Dollar
                   BOB: Bolivian Boliviano
                   BRL: Brazilian Real
                   BSD: Bahamian Dollar
                   BTN: Bhutanese Ngultrum
                   BWP: Botswanan Pula
-                  BZD: Belize Dollar
+                  BZD: Belizean Dollar
                   CAD: Canadian Dollar
                   CDF: Congolese Franc
                   CHF: Swiss Franc
@@ -488,13 +487,13 @@ paths:
                   KPW: North Korean Won
                   KRW: South Korean Won
                   KWD: Kuwaiti Dinar
-                  KYD: Cayman Islands Dollar
+                  KYD: Caymanian Dollar
                   KZT: Kazakhstani Tenge
                   LAK: Laotian Kip
                   LBP: Lebanese Pound
                   LKR: Sri Lankan Rupee
                   LRD: Liberian Dollar
-                  LSL: Lesotho Loti
+                  LSL: Basotho Maloti
                   LYD: Libyan Dinar
                   MAD: Moroccan Dirham
                   MDL: Moldovan Leu
@@ -503,7 +502,7 @@ paths:
                   MMK: Myanma Kyat
                   MNT: Mongolian Tugrik
                   MOP: Macanese Pataca
-                  MRU: Mauritanian Ouguiya
+                  MRU: Mauritanian Ouguiya (1973–2017)
                   MUR: Mauritian Rupee
                   MVR: Maldivian Rufiyaa
                   MWK: Malawian Kwacha
@@ -528,7 +527,7 @@ paths:
                   RSD: Serbian Dinar
                   RUB: Russian Ruble
                   RWF: Rwandan Franc
-                  SAR: Saudi Riyal
+                  SAR: Saudi Arabian Riyal
                   SBD: Solomon Islands Dollar
                   SCR: Seychellois Rupee
                   SDG: Sudanese Pound
@@ -539,7 +538,7 @@ paths:
                   SOS: Somali Shilling
                   SRD: Surinamese Dollar
                   SYP: Syrian Pound
-                  SZL: Swazi Lilangeni
+                  SZL: Swazi Emalangeni
                   THB: Thai Baht
                   TJS: Tajikistani Somoni
                   TMT: Turkmenistani Manat
@@ -547,7 +546,7 @@ paths:
                   TOP: Tongan Pa'anga
                   TRY: Turkish Lira
                   TTD: Trinidad and Tobago Dollar
-                  TWD: New Taiwan Dollar
+                  TWD: Taiwan New Dollar
                   TZS: Tanzanian Shilling
                   UAH: Ukrainian Hryvnia
                   UGX: Ugandan Shilling
@@ -555,7 +554,7 @@ paths:
                   UYU: Uruguayan Peso
                   UZS: Uzbekistan Som
                   VND: Vietnamese Dong
-                  VUV: Vanuatu Vatu
+                  VUV: Ni-Vanuatu Vatu
                   WST: Samoan Tala
                   XAF: CFA Franc BEAC
                   XCD: East Caribbean Dollar
@@ -565,7 +564,6 @@ paths:
                   YER: Yemeni Rial
                   ZAR: South African Rand
                   ZMW: Zambian Kwacha
-                  ZWL: Zimbabwean Dollar
                 ms: 8
         "400":
           description: "Bad Request"
