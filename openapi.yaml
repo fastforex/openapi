@@ -277,7 +277,6 @@ paths:
                   RUB: 73.59569
                   RWF: 972.40542
                   SAR: 3.74834
-                  SBD: 7.94634
                   SCR: 21.7415
                   SDG: 55.12079
                   SEK: 8.39445
@@ -528,7 +527,6 @@ paths:
                   RUB: Russian Ruble
                   RWF: Rwandan Franc
                   SAR: Saudi Arabian Riyal
-                  SBD: Solomon Islands Dollar
                   SCR: Seychellois Rupee
                   SDG: Sudanese Pound
                   SEK: Swedish Krona
@@ -638,7 +636,7 @@ components:
     DateTime:
       type: string
       pattern: "[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}"
-      description: "Datetime YYYY-MM-DD HH:MM:SS"
+      description: "UTC/GMT datetime YYYY-MM-DD HH:MM:SS"
   securitySchemes:
     api_key:
       type: apiKey
