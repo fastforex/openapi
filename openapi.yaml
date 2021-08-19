@@ -1,7 +1,7 @@
 openapi: "3.0.3"
 info:
   title: "fastFOREX.io"
-  version: "1.1.0"
+  version: "1.1.2"
   description: "Foreign currency exchange rate API"
   termsOfService: "http://www.fastforex.io/terms-of-sale"
   contact:
