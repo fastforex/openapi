@@ -12,9 +12,14 @@ info:
 servers:
   - url: "https://api.fastforex.io"
     description: "Production"
+tags:
+  - name: "currency"
+    description: "Currencies, rates and conversions"
 paths:
   /fetch-one:
     get:
+      tags:
+        - "currency"
       description: "Fetch a single currency exchange rate"
       parameters:
         - name: "from"
@@ -67,6 +72,8 @@ paths:
           description: "Rate limit exceeded"
   /fetch-multi:
     get:
+      tags:
+        - "currency"
       description: "Fetch multiple currency rates at once"
       parameters:
         - name: "from"
@@ -119,6 +126,8 @@ paths:
           description: "Rate limit exceeded"
   /fetch-all:
     get:
+      tags:
+        - "currency"
       description: "Fetch all available currency rates"
       parameters:
         - name: "from"
@@ -313,6 +322,8 @@ paths:
           description: "Rate limit exceeded"
   /convert:
     get:
+      tags:
+        - "currency"
       description: "Convert an amount of one currency into another currency"
       parameters:
         - name: "from"
@@ -379,6 +390,8 @@ paths:
           description: "Rate limit exceeded"
   /historical:
     get:
+      tags:
+        - "currency"
       description: "Fetch exchange rates for a date in the past"
       parameters:
         - name: "date"
@@ -588,6 +601,8 @@ paths:
           description: "Rate limit exceeded"
   /currencies:
     get:
+      tags:
+        - "currency"
       description: "Fetch a list of supported currencies"
       responses:
         "200":
@@ -765,6 +780,8 @@ paths:
           description: "Rate limit exceeded"
   /usage:
     get:
+      tags:
+        - "currency"
       description: "Fetch recent usage data for the supplied API key"
       responses:
         "200":
