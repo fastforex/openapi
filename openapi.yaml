@@ -396,7 +396,7 @@ paths:
       parameters:
         - name: "date"
           in: "query"
-          description: "UTC date in YYYY-MM-DD format. Must be in the past and within the last 60 days."
+          description: "UTC date in YYYY-MM-DD format. Must be in the past and within the last 150 days."
           required: true
           schema:
             $ref: "#/components/schemas/Date"
