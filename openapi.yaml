@@ -1,7 +1,7 @@
 openapi: "3.0.3"
 info:
   title: "fastFOREX.io"
-  version: "1.2.0"
+  version: "1.3.0"
   description: "Foreign currency exchange rate API"
   termsOfService: "https://www.fastforex.io/terms-of-sale"
   contact:
@@ -103,7 +103,7 @@ paths:
                     $ref: "#/components/schemas/DateTime"
                   ms:
                     $ref: "#/components/schemas/ResponseTime"
-                  result:
+                  results:
                     type: object
                     minProperties: 1
                     additionalProperties:
@@ -396,7 +396,7 @@ paths:
       parameters:
         - name: "date"
           in: "query"
-          description: "UTC date in YYYY-MM-DD format. Must be in the past and within the last 150 days."
+          description: "UTC date in YYYY-MM-DD format. Must be in the past and within the last 300 days."
           required: true
           schema:
             $ref: "#/components/schemas/Date"
@@ -597,6 +597,89 @@ paths:
           description: "Forbidden"
         "404":
           description: "Not Found - We do not have historical rates for the requested date and currency pair"
+        "429":
+          description: "Rate limit exceeded"
+  /time-series:
+    get:
+      tags:
+        - "currency"
+      description: "Fetch a time-series dataset of currency rates for the specified interval (only daily supported at launch)"
+      parameters:
+        - name: "from"
+          in: "query"
+          description: "Base currency 3-letter symbol, defaults to USD"
+          required: false
+          allowEmptyValue: true
+          schema:
+            $ref: "#/components/schemas/Currency"
+        - name: "to"
+          in: "query"
+          description: "Target currency 3-letter symbol"
+          required: true
+          schema:
+            $ref: "#/components/schemas/Currency"
+        - name: "start"
+          in: "query"
+          description: "UTC start date in YYYY-MM-DD format. Must be in the past and within the last 300 days."
+          required: true
+          schema:
+            $ref: "#/components/schemas/Date"
+        - name: "end"
+          in: "query"
+          description: "UTC end date in YYYY-MM-DD format. Must be in the past and within the last 300 days."
+          required: true
+          schema:
+            $ref: "#/components/schemas/Date"
+        - name: "interval"
+          in: "query"
+          description: "ISO8601 duration, such as P1D (daily). Defaults to P1D. At launch only supports daily."
+          required: false
+          schema:
+            $ref: "#/components/schemas/Duration"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  start:
+                    $ref: "#/components/schemas/Date"
+                  end:
+                    $ref: "#/components/schemas/Date"
+                  interval:
+                    $ref: "#/components/schemas/Duration"
+                  base:
+                    $ref: "#/components/schemas/Currency"
+                  ms:
+                    $ref: "#/components/schemas/ResponseTime"
+                  results:
+                    type: object
+                    minProperties: 1
+                    additionalProperties:
+                      type: number
+                      format: float
+              example:
+                start: '2021-01-24'
+                end: '2021-01-30'
+                interval: 'P1D'
+                base: USD
+                results:
+                  GBP:
+                    '2021-01-24': 1.14
+                    '2021-01-25': 1.14
+                    '2021-01-26': 1.15
+                    '2021-01-27': 1.16
+                    '2021-01-28': 1.14
+                    '2021-01-29': 1.13
+                    '2021-01-30': 1.14
+        "400":
+          description: "Bad Request"
+        "401":
+          description: "Not Authorized"
+        "403":
+          description: "Forbidden"
         "429":
           description: "Rate limit exceeded"
   /currencies:
@@ -850,6 +933,9 @@ components:
       type: string
       pattern: "[0-9]{4}-[0-9]{2}-[0-9]{2}"
       description: "UTC/GMT date YYYY-MM-DD"
+    Interval:
+      type: string
+      description: "ISO8601 Duration. https://en.wikipedia.org/wiki/ISO_8601#Durations"
   securitySchemes:
     api_key:
       type: apiKey
