@@ -933,7 +933,7 @@ components:
       type: string
       pattern: "[0-9]{4}-[0-9]{2}-[0-9]{2}"
       description: "UTC/GMT date YYYY-MM-DD"
-    Interval:
+    Duration:
       type: string
       description: "ISO8601 Duration. https://en.wikipedia.org/wiki/ISO_8601#Durations"
   securitySchemes:
