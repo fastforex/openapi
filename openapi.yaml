@@ -396,7 +396,7 @@ paths:
       parameters:
         - name: "date"
           in: "query"
-          description: "UTC date in YYYY-MM-DD format. Must be in the past and within the last 300 days."
+          description: "UTC date in YYYY-MM-DD format. Must be in the past and within the last 365 days."
           required: true
           schema:
             $ref: "#/components/schemas/Date"
@@ -620,13 +620,13 @@ paths:
             $ref: "#/components/schemas/Currency"
         - name: "start"
           in: "query"
-          description: "UTC start date in YYYY-MM-DD format. Must be in the past and within the last 300 days."
+          description: "UTC start date in YYYY-MM-DD format. Must be in the past and within the last 365 days."
           required: true
           schema:
             $ref: "#/components/schemas/Date"
         - name: "end"
           in: "query"
-          description: "UTC end date in YYYY-MM-DD format. Must be in the past and within the last 300 days."
+          description: "UTC end date in YYYY-MM-DD format. Must be in the past and within the last 365 days."
           required: true
           schema:
             $ref: "#/components/schemas/Date"
