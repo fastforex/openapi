@@ -6,11 +6,7 @@ OpenAPI 3 spec file `openapi.yaml`.
 
 ## Interactive Documentation
 
-### ReadMe
+### Readme.io
 
 https://fastforex.readme.io
-
-### SwaggerHub
-
-https://app.swaggerhub.com/apis/fastforex/fastFOREX.io
 
