@@ -1,8 +1,8 @@
 openapi: "3.0.3"
 info:
   title: "fastFOREX.io"
-  version: "1.3.1"
-  description: "Foreign currency exchange rate API"
+  version: "1.4.0"
+  description: "Foreign & cryptocurrency exchange rate API"
   termsOfService: "https://www.fastforex.io/terms-of-sale"
   contact:
     email: "support@fastforex.io"
@@ -14,27 +14,32 @@ servers:
     description: "Production"
 tags:
   - name: "currency"
-    description: "Currencies, rates and conversions"
+    description: "Physical currencies, rates and conversions"
+  - name: "crypto"
+    description: "Digital currencies, pairs & prices"
+  - name: "admin"
+    description: "Account admin"
 paths:
   /fetch-one:
     get:
       tags:
         - "currency"
-      description: "Fetch a single currency exchange rate"
+        - "crypto"
+      description: "Fetch a single currency exchange rate, from and to any supported physical or digital currency."
       parameters:
         - name: "from"
           in: "query"
-          description: "Base currency 3-letter symbol, defaults to USD"
+          description: "Base currency symbol (physical or digital), defaults to USD"
           required: false
           allowEmptyValue: true
           schema:
-            $ref: "#/components/schemas/Currency"
+            $ref: "#/components/schemas/AnyCurrency"
         - name: "to"
           in: "query"
-          description: "Target currency 3-letter symbol"
+          description: "Target currency symbol (physical or digital), defaults to USD"
           required: true
           schema:
-            $ref: "#/components/schemas/Currency"
+            $ref: "#/components/schemas/AnyCurrency"
       responses:
         "200":
           description: "Success"
@@ -44,7 +49,7 @@ paths:
                 type: object
                 properties:
                   base:
-                    $ref: "#/components/schemas/Currency"
+                    $ref: "#/components/schemas/AnyCurrency"
                   updated:
                     $ref: "#/components/schemas/DateTime"
                   ms:
@@ -324,21 +329,22 @@ paths:
     get:
       tags:
         - "currency"
-      description: "Convert an amount of one currency into another currency"
+        - "crypto"
+      description: "Convert an amount of one currency into another currency (supports physical and digital currencies)"
       parameters:
         - name: "from"
           in: "query"
-          description: "Base currency 3-letter symbol, defaults to USD"
+          description: "Base currency symbol (physical or digital)"
           required: false
           allowEmptyValue: true
           schema:
-            $ref: "#/components/schemas/Currency"
+            $ref: "#/components/schemas/AnyCurrency"
         - name: "to"
           in: "query"
-          description: "Target currency 3-letter symbol"
+          description: "Target currency symbol (physical or digital)"
           required: true
           schema:
-            $ref: "#/components/schemas/Currency"
+            $ref: "#/components/schemas/AnyCurrency"
         - name: "amount"
           in: "query"
           description: "Amount of source currency to convert"
@@ -356,7 +362,7 @@ paths:
                 type: object
                 properties:
                   base:
-                    $ref: "#/components/schemas/Currency"
+                    $ref: "#/components/schemas/AnyCurrency"
                   ms:
                     $ref: "#/components/schemas/ResponseTime"
                   amount:
@@ -861,10 +867,124 @@ paths:
           description: "Not Authorized"
         "429":
           description: "Rate limit exceeded"
+  /crypto/currencies:
+    get:
+      tags:
+        - "crypto"
+      description: "Fetch a list of 200+ supported cryptocurrencies"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ms:
+                    $ref: "#/components/schemas/ResponseTime"
+                  currencies:
+                    type: object
+                    minProperties: 200
+                    additionalProperties:
+                      type: string
+              example:
+                currencies:
+                  1INCH: 1inch Network
+                  AAVE: Aave
+                  ACA: Acala Token
+                  ACH: Alchemy Pay
+                  ADA: Cardano
+                  AERGO: Aergo
+                ms: 8
+        "400":
+          description: "Bad Request"
+        "401":
+          description: "Not Authorized"
+        "429":
+          description: "Rate limit exceeded"
+  /crypto/pairs:
+    get:
+      tags:
+        - "crypto"
+      description: "Fetch a list of 400+ supported cryptocurrency pairs"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ms:
+                    $ref: "#/components/schemas/ResponseTime"
+                  pairs:
+                    type: object
+                    minProperties: 400
+                    additionalProperties:
+                      $ref: "#/components/schemas/AnyCurrencyPair"
+              example:
+                pairs:
+                  1INCH/BTC:
+                    base: 1INCH
+                    quote: BTC
+                  BTC/USD:
+                    base: BTC
+                    quote: USD
+                  ETH/BTC:
+                    base: ETH
+                    quote: BTC
+                ms: 8
+        "400":
+          description: "Bad Request"
+        "401":
+          description: "Not Authorized"
+        "429":
+          description: "Rate limit exceeded"
+  /crypto/fetch-prices:
+    get:
+      tags:
+        - "crypto"
+      description: "Fetch one or more (up to 10) real-time prices for supported cryptocurrency pairs"
+      parameters:
+        - name: "pairs"
+          in: "query"
+          description: "Up to 10 target currency pairs, comma separated in XXX/YYY format"
+          required: true
+          schema:
+            $ref: "#/components/schemas/CryptoCurrencyPairList"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ms:
+                    $ref: "#/components/schemas/ResponseTime"
+                  prices:
+                    type: object
+                    minProperties: 1
+                    additionalProperties:
+                      type: number
+                      format: float
+              example:
+                prices:
+                  BTC/USD: 20624.21
+                  ETH/BTC: 0.075316
+                ms: 8
+        "400":
+          description: "Bad Request"
+        "401":
+          description: "Not Authorized"
+        "403":
+          description: "Forbidden"
+        "429":
+          description: "Rate limit exceeded"
   /usage:
     get:
       tags:
-        - "currency"
+        - "admin"
       description: "Fetch recent usage data for the supplied API key"
       responses:
         "200":
@@ -916,11 +1036,34 @@ components:
     Currency:
       type: "string"
       pattern: "[A-Z]{3}"
-      description: "Three letter currency code"
+      description: "Three-letter ISO 4217 currency code"
     CurrencyList:
       type: "string"
       pattern: "[A-Z]{3}(,[A-Z]{3})*"
-      description: "A comma-separated list of three letter currency codes"
+      description: "A comma-separated list of three-letter ISO 4217 currency codes"
+    AnyCurrency:
+      type: "string"
+      pattern: "[A-Z0-9]{3,6}"
+      description: "Currency code for a physical or digital/cryptocurrency"
+    CryptoCurrencyPairList:
+      type: "string"
+      pattern: "[A-Z0-9]{3,6}/[A-Z0-9]{3,6}(,[A-Z0-9]{3,6}/[A-Z0-9]{3,6})*"
+      description: "A comma-separated list of crypto pairs"
+    AnyCurrencyPair:
+      type: object
+      description: "Defines a currency trading pair."
+      properties:
+        base:
+          type: string
+          pattern: "[A-Z0-9]{3,6}"
+          description: "Base currency in the pair"
+        quote:
+          type: string
+          pattern: "[A-Z0-9]{3,6}"
+          description: "Quote currency in the pair"
+      example:
+        base: USD
+        quote: BTC
     ResponseTime:
       type: number
       format: int32
