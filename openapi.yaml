@@ -1,7 +1,7 @@
 openapi: "3.0.3"
 info:
   title: "fastFOREX.io"
-  version: "1.4.0"
+  version: "1.5.0"
   description: "Foreign & cryptocurrency exchange rate API"
   termsOfService: "https://www.fastforex.io/terms-of-sale"
   contact:
@@ -985,7 +985,7 @@ paths:
     get:
       tags:
         - "admin"
-      description: "Fetch recent usage data for the supplied API key"
+      description: "Fetch recent usage data for the supplied API key. Includes current period start, end, usage and quota remaining"
       responses:
         "200":
           description: "Success"
@@ -1006,6 +1006,19 @@ paths:
                     additionalProperties:
                       type: number
                       format: int32
+                  current_period:
+                    type: object
+                    properties:
+                      start:
+                        $ref: "#/components/schemas/Date"
+                      end:
+                        $ref: "#/components/schemas/Date"
+                      remaining_quota:
+                        type: number
+                        format: int32
+                      usage:
+                        type: number
+                        format: int32
               example:
                 usage:
                   '2021-01-24': 247
@@ -1024,6 +1037,11 @@ paths:
                   '2021-02-06': 53
                   '2021-02-07': 3245
                 monthly_quota: 500000
+                current_period:
+                  'start': '2021-02-03'
+                  'end': '2021-03-02'
+                  'remaining_quota': 495453
+                  'usage': 4547
                 ms: 3
         "401":
           description: "Not Authorized"
