@@ -1,7 +1,7 @@
 openapi: "3.0.3"
 info:
   title: "fastFOREX.io"
-  version: "1.5.0"
+  version: "1.5.1"
   description: "Foreign & cryptocurrency exchange rate API"
   termsOfService: "https://www.fastforex.io/terms-of-sale"
   contact:
@@ -402,7 +402,7 @@ paths:
       parameters:
         - name: "date"
           in: "query"
-          description: "UTC date in YYYY-MM-DD format. Must be in the past and within the last 365 days."
+          description: "UTC date in YYYY-MM-DD format. Must be in the past and after 2015-01-01."
           required: true
           schema:
             $ref: "#/components/schemas/Date"
@@ -626,13 +626,13 @@ paths:
             $ref: "#/components/schemas/Currency"
         - name: "start"
           in: "query"
-          description: "UTC start date in YYYY-MM-DD format. Must be in the past and within the last 365 days."
+          description: "UTC start date in YYYY-MM-DD format. Must be in the past and after 2015-01-01."
           required: true
           schema:
             $ref: "#/components/schemas/Date"
         - name: "end"
           in: "query"
-          description: "UTC end date in YYYY-MM-DD format. Must be in the past and within the last 365 days."
+          description: "UTC end date in YYYY-MM-DD format. Must be in the past and after 2015-01-01."
           required: true
           schema:
             $ref: "#/components/schemas/Date"
