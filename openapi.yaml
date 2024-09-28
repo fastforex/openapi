@@ -1,7 +1,7 @@
 openapi: "3.0.3"
 info:
   title: "fastFOREX.io"
-  version: "1.5.1"
+  version: "1.6.0"
   description: "Foreign & cryptocurrency exchange rate API"
   termsOfService: "https://www.fastforex.io/terms-of-sale"
   contact:
@@ -353,6 +353,14 @@ paths:
             type: number
             format: float
             minimum: 0.01
+        - name: "precision"
+          in: "query"
+          description: "Rounding precision for converted amount, defaults to 2 decimal places"
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 20
       responses:
         "200":
           description: "Success"
