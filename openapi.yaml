@@ -1,7 +1,7 @@
 openapi: "3.0.3"
 info:
   title: "fastFOREX.io"
-  version: "2.1.0"
+  version: "2.2.0"
   description: "Foreign & cryptocurrency exchange rate API"
   termsOfService: "https://www.fastforex.io/terms-of-sale"
   contact:
@@ -53,7 +53,7 @@ paths:
                   base:
                     $ref: "#/components/schemas/AnyCurrency"
                   updated:
-                    $ref: "#/components/schemas/DateTime"
+                    $ref: "#/components/schemas/DateTimes"
                   ms:
                     $ref: "#/components/schemas/ResponseTime"
                   result:
@@ -67,7 +67,7 @@ paths:
                 base: USD
                 result:
                   EUR: 0.82791
-                updated: '2021-01-16 16:34:29'
+                updated: '2021-01-16T16:34:29Z'
                 ms: 4
         "400":
           description: "Bad Request"
@@ -107,7 +107,7 @@ paths:
                   base:
                     $ref: "#/components/schemas/Currency"
                   updated:
-                    $ref: "#/components/schemas/DateTime"
+                    $ref: "#/components/schemas/DateTimes"
                   ms:
                     $ref: "#/components/schemas/ResponseTime"
                   results:
@@ -121,7 +121,7 @@ paths:
                 results:
                   EUR: 0.82791
                   GBP: 0.73605
-                updated: '2021-01-16 16:34:29'
+                updated: '2021-01-16T16:34:29Z'
                 ms: 8
         "400":
           description: "Bad Request"
@@ -155,7 +155,7 @@ paths:
                   base:
                     $ref: "#/components/schemas/Currency"
                   updated:
-                    $ref: "#/components/schemas/DateTime"
+                    $ref: "#/components/schemas/DateTimes"
                   ms:
                     $ref: "#/components/schemas/ResponseTime"
                   results:
@@ -326,7 +326,7 @@ paths:
                   YER: 245.27
                   ZAR: 19.1345
                   ZMW: 28.3
-                updated: '2025-04-11 23:59:53'
+                updated: '2025-04-11T23:59:53Z'
                 ms: 77
         "400":
           description: "Bad Request"
@@ -340,7 +340,7 @@ paths:
     get:
       tags:
         - "currency"
-      description: "Fetch a set of many source currency rates to a single target currency (inverse of /fetch-multi). Midpoint spot rates."
+      description: "Fetch a set of many source currency rates to a single target currency (inverse of /fetch-multi). Midpoint spot rates. Costs one API call per pair returned."
       parameters:
         - name: "from"
           in: "query"
@@ -365,7 +365,7 @@ paths:
                   to:
                     $ref: "#/components/schemas/Currency"
                   updated:
-                    $ref: "#/components/schemas/DateTime"
+                    $ref: "#/components/schemas/DateTimes"
                   calls:
                     $ref: "#/components/schemas/ApiUsage"
                   ms:
@@ -384,7 +384,7 @@ paths:
                   ZAR: 0.0578,
                   AUD: 0.65962,
                   AED: 0.27229,
-                updated: '2025-10-03 16:34:29'
+                updated: '2025-10-03T16:34:29Z'
                 calls: 5
                 ms: 12
         "400":
@@ -399,7 +399,7 @@ paths:
     get:
       tags:
         - "currency"
-      description: "Fetch a matrix of multiple from/to currency pairs. Midpoint spot rates."
+      description: "Fetch a matrix of multiple from/to currency pairs. Midpoint spot rates. Costs one API call per pair returned."
       parameters:
         - name: "from"
           in: "query"
@@ -439,7 +439,7 @@ paths:
                         type: number
                         format: float
                   updated:
-                    $ref: "#/components/schemas/DateTime"
+                    $ref: "#/components/schemas/DateTimes"
                   calls:
                     $ref: "#/components/schemas/ApiUsage"
                   ms:
@@ -476,7 +476,7 @@ paths:
                     GBP: 0.20196
                     JPY: 40.1552
                     CNY: 1.938
-                updated: '2025-10-03 16:52:05'
+                updated: '2025-10-03T16:52:05Z'
                 calls: 16
                 ms: 8
         "400":
@@ -1275,6 +1275,16 @@ components:
       type: number
       format: int32
       description: "The number of API calls consumed by this request"
+    TimestampMillis:
+      type: number
+      format: int64
+      description: "Milliseconds since Jan 1 1970 (unix timestamp with millisecond precision)"
+      example: 1739305030072
+    IsoDateTimeZone:
+      type: string
+      pattern: "[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(Z?|[+-][0-9]{2}:00)"
+      description: "ISO8601 Datetime with optional timezone offset YYYY-MM-DDTHH:MM:SS±HH:00"
+      example: "2021-01-26T15:30:00-05:00"
     DateTime:
       type: string
       pattern: "[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}"
@@ -1283,6 +1293,16 @@ components:
       type: string
       pattern: "[0-9]{4}-[0-9]{2}-[0-9]{2}"
       description: "UTC/GMT date YYYY-MM-DD"
+    DateTimes:
+      description: "A datetime value. If no timezone offset supplied, UTC/GMT is assumed."
+      oneOf:
+        - $ref: "#/components/schemas/DateTime"
+        - $ref: "#/components/schemas/IsoDateTimeZone"
+        - $ref: "#/components/schemas/TimestampMillis"
+    DateTimeFormat:
+      description: "Can be [ISO] ISO8601 datetime including timezone offset, [TSP] UNIX Timestamp in milliseconds, or [UTCYMD] 'YYYY-MM-DD HH:MM:SS' (UTC)."
+      type: string
+      enum: [ISO, TSP, UTCYMD]
     Duration:
       type: string
       description: "ISO8601 Duration. https://en.wikipedia.org/wiki/ISO_8601#Durations"
