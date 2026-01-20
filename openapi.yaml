@@ -1,7 +1,7 @@
 openapi: "3.0.3"
 info:
   title: "fastFOREX.io"
-  version: "2.3.0"
+  version: "2.3.1"
   description: "Foreign & cryptocurrency exchange rate API"
   termsOfService: "https://www.fastforex.io/terms-of-sale"
   contact:
@@ -1970,6 +1970,26 @@ components:
       example:
         base: USD
         quote: BTC
+    AnyTradingPair:
+      type: object
+      description: "Defines a currency trading pair."
+      properties:
+        base:
+          type: string
+          pattern: "[A-Z0-9]{3,6}"
+          description: "Base currency in the pair"
+        quote:
+          type: string
+          pattern: "[A-Z0-9]{3,6}"
+          description: "Quote currency in the pair"
+        alt:
+          type: string
+          pattern: "[A-Z0-9]{6,8}"
+          description: "Alternative trading pair identifier"
+      example:
+        base: EUR
+        quote: USD
+        alt: EURUSD
     ResponseTime:
       type: number
       format: int32
