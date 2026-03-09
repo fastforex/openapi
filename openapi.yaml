@@ -1,7 +1,7 @@
 openapi: "3.0.3"
 info:
   title: "fastFOREX.io"
-  version: "2.3.1"
+  version: "2.3.2"
   description: "Foreign & cryptocurrency exchange rate API"
   termsOfService: "https://www.fastforex.io/terms-of-sale"
   contact:
@@ -38,7 +38,7 @@ paths:
         - "plan-one"
         - "plan-extra"
         - "plan-premium"
-      description: "Fetch a single currency exchange rate, from and to any supported physical or digital currency."
+      description: "Fetch a single currency exchange rate, from and to any supported physical or digital currency. Midpoint spot rate."
       parameters:
         - name: "from"
           in: "query"
@@ -95,7 +95,7 @@ paths:
         - "plan-one"
         - "plan-extra"
         - "plan-premium"
-      description: "Fetch multiple currency rates at once"
+      description: "Fetch multiple target exchange rates from a single source currency. Midpoint spot rates."
       parameters:
         - name: "from"
           in: "query"
@@ -152,7 +152,7 @@ paths:
         - "plan-one"
         - "plan-extra"
         - "plan-premium"
-      description: "Fetch all available currency rates"
+      description: "Fetch all available currency rates for the supplied source currency. Midpoint spot rates."
       parameters:
         - name: "from"
           in: "query"
@@ -597,7 +597,7 @@ paths:
         - "plan-one"
         - "plan-extra"
         - "plan-premium"
-      description: "Fetch exchange rates for a date in the past"
+      description: "Fetch midpoint currency exchange rates for a date in the past"
       parameters:
         - name: "date"
           in: "query"
@@ -811,7 +811,7 @@ paths:
         - "plan-one"
         - "plan-extra"
         - "plan-premium"
-      description: "Fetch a time-series dataset of currency rates for the specified interval (only daily supported currently)"
+      description: "Fetch a time-series dataset of daily currency exchange rates for the specified interval (only daily supported currently). See our FX quote & OHLC time-series endpoints for more granular data."
       parameters:
         - name: "from"
           in: "query"
@@ -897,7 +897,7 @@ paths:
         - "plan-one"
         - "plan-extra"
         - "plan-premium"
-      description: "Fetch a list of supported currencies"
+      description: "Fetch a list of 160+ supported currencies with symbols. Also see /crypto/currencies"
       responses:
         "200":
           description: "Success"
@@ -1091,7 +1091,7 @@ paths:
         - "plan-one"
         - "plan-extra"
         - "plan-premium"
-      description: "Fetch a list of 200+ supported cryptocurrencies"
+      description: "Fetch a list of 500+ supported cryptocurrencies"
       responses:
         "200":
           description: "Success"
@@ -1537,7 +1537,7 @@ paths:
         - "fx"
         - "plan-extra"
         - "plan-premium"
-      description: "Live bid & ask quote for 1 or more FX trading pairs."
+      description: "Live bid & ask quote for 1 or more (up to 10 in a single request) FX trading pairs."
       parameters:
         - name: "pairs"
           in: "query"
@@ -1862,7 +1862,7 @@ paths:
         - "plan-one"
         - "plan-extra"
         - "plan-premium"
-      description: "Fetch recent usage data for the supplied API key. Includes current period start, end, usage and quota remaining"
+      description: "Fetch recent API usage data. Includes current period start, end, usage and quota remaining"
       responses:
         "200":
           description: "Success"
