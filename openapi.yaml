@@ -1,7 +1,7 @@
 openapi: "3.0.3"
 info:
   title: "fastFOREX.io"
-  version: "2.3.2"
+  version: "2.4.0"
   description: "Foreign & cryptocurrency exchange rate API"
   termsOfService: "https://www.fastforex.io/terms-of-sale"
   contact:
@@ -21,6 +21,8 @@ tags:
     description: "Digital currencies, pairs & prices"
   - name: "fx"
     description: "Realtime FX trading pairs - instruments, prices and history"
+  - name: "metals"
+    description: "Precious and base metals - instruments, units, purities and prices"
   - name: "admin"
     description: "Account admin"
   - name: "plan-one"
@@ -1553,20 +1555,19 @@ paths:
               schema:
                 type: object
                 properties:
-                  prices:
+                  quotes:
                     type: object
+                    description: "Quotes keyed by trading pair"
                     minProperties: 1
                     additionalProperties:
                       type: object
                       properties:
                         bid:
-                          type: number
-                          format: float
+                          $ref: "#/components/schemas/FxQuotePrice"
                         ask:
-                          type: number
-                          format: float
+                          $ref: "#/components/schemas/FxQuotePrice"
                         tsp:
-                          $ref: "#/components/schemas/TimestampMillis"
+                          $ref: "#/components/schemas/TimestampMillisString"
                         size:
                           $ref: "#/components/schemas/QuoteSize"
                   ms:
@@ -1574,19 +1575,19 @@ paths:
                 example:
                   quotes:
                     EURUSD:
-                      bid: 1.2145
-                      ask: 1.2146
-                      tsp: 1739305030072
+                      bid: "1.2145"
+                      ask: "1.2146"
+                      tsp: "1739305030072"
                       size: 1
                     GBPUSD:
-                      bid: 1.4145
-                      ask: 1.4146
-                      tsp: 1739305029908
+                      bid: "1.4145"
+                      ask: "1.4146"
+                      tsp: "1739305029908"
                       size: 1
                     IRRUSD:
-                      bid: 2.3808
-                      ask: 2.3816
-                      tsp: 1739305029908
+                      bid: "2.3808"
+                      ask: "2.3816"
+                      tsp: "1739305029908"
                       size: 100000
                   ms: 8
         "400":
@@ -1855,6 +1856,454 @@ paths:
           description: "Forbidden"
         "429":
           description: "Rate limit exceeded"
+  /metals/list:
+    get:
+      tags:
+        - "metals"
+        - "plan-premium"
+      description: "List the supported metals, keyed by symbol"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ms:
+                    $ref: "#/components/schemas/ResponseTime"
+                  metals:
+                    type: object
+                    minProperties: 1
+                    additionalProperties:
+                      type: string
+                      description: "Metal name"
+              example:
+                metals:
+                  XAU: Gold
+                  XAG: Silver
+                  XPT: Platinum
+                  XPD: Palladium
+                  XAL: Aluminium
+                  XCU: Copper
+                  XPB: Lead
+                  XNI: Nickel
+                  XZN: Zinc
+                ms: 11
+        "400":
+          description: "Bad Request"
+        "401":
+          description: "Not Authorized"
+        "403":
+          description: "Forbidden"
+        "429":
+          description: "Rate limit exceeded"
+  /metals/units:
+    get:
+      tags:
+        - "metals"
+        - "plan-premium"
+      description: "List the units of mass that metal prices can be quoted in, keyed by unit handle"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ms:
+                    $ref: "#/components/schemas/ResponseTime"
+                  units:
+                    type: object
+                    minProperties: 1
+                    additionalProperties:
+                      type: string
+                      description: "Unit name"
+              example:
+                units:
+                  gram: Gram
+                  kilogram: Kilogram
+                  metric_tonne: Metric Tonne
+                  grain: Grain
+                  pennyweight: Pennyweight
+                  oz_t: Troy Ounce
+                  lb_t: Troy Pound
+                  oz_av: Ounce (Avoirdupois)
+                  lb_av: Pound (Avoirdupois)
+                  tael: Tael (Hong Kong)
+                  baht: Baht (Thai)
+                  tola: Tola
+                ms: 34
+        "400":
+          description: "Bad Request"
+        "401":
+          description: "Not Authorized"
+        "403":
+          description: "Forbidden"
+        "429":
+          description: "Rate limit exceeded"
+  /metals/purities:
+    get:
+      tags:
+        - "metals"
+        - "plan-premium"
+      description: "List the purity grades dealt in for each precious metal, finest first. Base metals are traded to a single contract grade and are not listed here."
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ms:
+                    $ref: "#/components/schemas/ResponseTime"
+                  purities:
+                    type: object
+                    description: "Purity grades keyed by metal symbol"
+                    minProperties: 1
+                    additionalProperties:
+                      type: array
+                      items:
+                        $ref: "#/components/schemas/MetalPurity"
+              example:
+                purities:
+                  XAU:
+                    - code: "1000"
+                      name: Pure Gold Spot
+                      fineness: "1000"
+                    - code: "999"
+                      name: 24K
+                      fineness: "999.0"
+                    - code: "916"
+                      name: 22K
+                      fineness: "916.0"
+                    - code: "750"
+                      name: 18K
+                      fineness: "750.0"
+                  XAG:
+                    - code: "1000"
+                      name: Pure Silver Spot
+                      fineness: "1000"
+                    - code: "958.4"
+                      name: Britannia
+                      fineness: "958.4"
+                    - code: "925"
+                      name: Sterling
+                      fineness: "925.0"
+                ms: 9
+        "400":
+          description: "Bad Request"
+        "401":
+          description: "Not Authorized"
+        "403":
+          description: "Forbidden"
+        "429":
+          description: "Rate limit exceeded"
+  /metals/instruments:
+    get:
+      tags:
+        - "metals"
+        - "plan-premium"
+      description: "List the tradeable metals instruments, keyed by symbol"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ms:
+                    $ref: "#/components/schemas/ResponseTime"
+                  source:
+                    type: string
+                    description: "Origin of the price data"
+                  instruments:
+                    type: object
+                    minProperties: 1
+                    additionalProperties:
+                      $ref: "#/components/schemas/MetalInstrument"
+              example:
+                instruments:
+                  XAUAUD:
+                    symbol: XAUAUD
+                    alt: XAU/AUD
+                    metal: XAU
+                    name: Gold
+                    category: precious_metal
+                    target: AUD
+                    target_name: Australian Dollar
+                    unit: oz_t
+                    unit_name: Troy Ounce
+                    type: spot
+                    purity: "1000"
+                  XCUUSD:
+                    symbol: XCUUSD
+                    alt: XCU/USD
+                    metal: XCU
+                    name: Copper
+                    category: base_metal
+                    grade: grade_a
+                    grade_name: Grade A
+                    grade_min_purity_pct: 99.9935
+                    target: USD
+                    target_name: United States Dollar
+                    unit: metric_tonne
+                    unit_name: Metric Tonne
+                    type: spot
+                  XAGXAU:
+                    symbol: XAGXAU
+                    alt: XAG/XAU
+                    metal: XAG
+                    name: Silver
+                    category: precious_metal
+                    target: XAU
+                    target_name: Gold
+                    type: ratio
+                source: otc_aggregate
+                ms: 12
+        "400":
+          description: "Bad Request"
+        "401":
+          description: "Not Authorized"
+        "403":
+          description: "Forbidden"
+        "429":
+          description: "Rate limit exceeded"
+  /metals/spot:
+    get:
+      tags:
+        - "metals"
+        - "plan-premium"
+      description: >-
+        Spot price for a single metal, in the currency, unit of mass and purity you ask for.
+
+
+        The instrument actually quoted is chosen from the metal, currency and unit
+        together, and is reported as `source_instrument`. Where no instrument is quoted
+        directly in the requested currency, the price is crossed via USD and `cross_rate`
+        is true - this consumes an additional FX product call and widens the bid/ask gap.
+      parameters:
+        - name: "metal"
+          in: "query"
+          description: "Metal symbol, defaults to XAU"
+          required: false
+          allowEmptyValue: true
+          schema:
+            $ref: "#/components/schemas/MetalSymbol"
+        - name: "currency"
+          in: "query"
+          description: "Target currency, defaults to USD"
+          required: false
+          allowEmptyValue: true
+          schema:
+            $ref: "#/components/schemas/Currency"
+        - name: "unit"
+          in: "query"
+          description: "Unit of mass to price in. Defaults to oz_t for precious metals and metric_tonne for base metals."
+          required: false
+          allowEmptyValue: true
+          schema:
+            $ref: "#/components/schemas/MetalUnit"
+        - name: "purity"
+          in: "query"
+          description: >-
+            Purity to price at, for precious metals only - ignored for base metals. Either
+            a code from /metals/purities, or any custom fineness between 0 and 1000
+            exclusive of zero. Omit for the quoted (pure) price.
+          required: false
+          allowEmptyValue: true
+          schema:
+            $ref: "#/components/schemas/MetalPurityCode"
+        - name: "verbose"
+          in: "query"
+          description: "Include the display-name fields in the response"
+          required: false
+          allowEmptyValue: true
+          schema:
+            $ref: "#/components/schemas/VerboseFlag"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/MetalSpot"
+                  - type: object
+                    properties:
+                      ms:
+                        $ref: "#/components/schemas/ResponseTime"
+              examples:
+                precious:
+                  summary: "Gold in USD per troy ounce"
+                  value:
+                    bid: "2500.10"
+                    ask: "2500.90"
+                    mid: "2500.50"
+                    spread: "0.80"
+                    metal: XAU
+                    currency: USD
+                    unit: oz_t
+                    tsp: 1739305030072
+                    dtm: "2026-08-16T21:02:19Z"
+                    cross_rate: false
+                    source: otc_aggregate
+                    source_instrument: XAUUSD
+                    purity: "1000"
+                    purity_name: Pure Gold Spot
+                    ms: 6
+                purity_and_unit:
+                  summary: "18 carat gold per gram, verbose"
+                  value:
+                    bid: "60.3097"
+                    ask: "60.3290"
+                    mid: "60.3193"
+                    spread: "0.0193"
+                    metal: XAU
+                    metal_name: Gold
+                    currency: USD
+                    currency_name: United States Dollar
+                    unit: gram
+                    unit_name: Gram
+                    tsp: 1739305030072
+                    dtm: "2026-08-16T21:02:19Z"
+                    cross_rate: false
+                    source: otc_aggregate
+                    source_instrument: GAUUSD
+                    purity: "750"
+                    purity_name: 18K
+                    ms: 7
+                base_metal:
+                  summary: "Copper in USD per tonne, crossed via USD"
+                  value:
+                    bid: "9500.00"
+                    ask: "9510.00"
+                    mid: "9505.00"
+                    spread: "10.00"
+                    metal: XCU
+                    currency: EUR
+                    unit: metric_tonne
+                    tsp: 1739305030072
+                    dtm: "2026-08-16T21:02:19Z"
+                    cross_rate: true
+                    source: otc_aggregate
+                    source_instrument: XCUUSD
+                    grade: grade_a
+                    ms: 9
+        "400":
+          description: "Bad Request - unknown metal, currency, unit or purity"
+        "401":
+          description: "Not Authorized"
+        "403":
+          description: "Forbidden"
+        "429":
+          description: "Rate limit exceeded"
+        "500":
+          description: "Upstream price data unavailable"
+  /metals/quote:
+    get:
+      tags:
+        - "metals"
+        - "plan-premium"
+      description: >-
+        Latest bid/ask for up to 10 metals instruments, quoted exactly as the feed
+        supplies them - no unit, purity or currency conversion is applied.
+
+
+        Instruments beyond the first 10 are reported under `warnings.ignored_instruments`,
+        and unrecognised ones under `warnings.invalid_instruments`. The request fails only
+        if no valid instrument is supplied at all.
+      parameters:
+        - name: "instruments"
+          in: "query"
+          description: "Comma-separated list of instrument symbols, maximum 10"
+          required: true
+          schema:
+            $ref: "#/components/schemas/MetalInstrumentList"
+        - name: "verbose"
+          in: "query"
+          description: "Include the display-name fields in the response"
+          required: false
+          allowEmptyValue: true
+          schema:
+            $ref: "#/components/schemas/VerboseFlag"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ms:
+                    $ref: "#/components/schemas/ResponseTime"
+                  source:
+                    type: string
+                    description: "Origin of the price data"
+                  quotes:
+                    type: object
+                    description: "Quotes keyed by instrument symbol"
+                    minProperties: 1
+                    maxProperties: 10
+                    additionalProperties:
+                      $ref: "#/components/schemas/MetalQuote"
+                  warnings:
+                    type: object
+                    description: "Present only when some supplied instruments were not quoted"
+                    properties:
+                      invalid_instruments:
+                        type: array
+                        description: "Supplied symbols that are not recognised"
+                        items:
+                          type: string
+                      ignored_instruments:
+                        type: array
+                        description: "Valid symbols dropped for exceeding the 10 instrument limit"
+                        items:
+                          type: string
+              example:
+                quotes:
+                  XAUUSD:
+                    bid: "2500.10"
+                    ask: "2500.90"
+                    mid: "2500.50"
+                    spread: "0.80"
+                    tsp: 1739305030072
+                    dtm: "2026-08-16T21:02:19Z"
+                    metal: XAU
+                    target: USD
+                    unit: oz_t
+                    purity: "1000"
+                    cross_rate: false
+                  XCUUSD:
+                    bid: "9500.00"
+                    ask: "9510.00"
+                    mid: "9505.00"
+                    spread: "10.00"
+                    tsp: 1739305030072
+                    dtm: "2026-08-16T21:02:19Z"
+                    metal: XCU
+                    target: USD
+                    unit: metric_tonne
+                    cross_rate: false
+                source: otc_aggregate
+                warnings:
+                  invalid_instruments:
+                    - XYZUSD
+                ms: 8
+        "400":
+          description: "Bad Request - no valid metals instruments provided"
+        "401":
+          description: "Not Authorized"
+        "403":
+          description: "Forbidden"
+        "429":
+          description: "Rate limit exceeded"
+        "500":
+          description: "Upstream price data unavailable"
   /usage:
     get:
       tags:
@@ -1990,6 +2439,234 @@ components:
         base: EUR
         quote: USD
         alt: EURUSD
+    MetalSymbol:
+      type: "string"
+      pattern: "X[A-Z]{2}"
+      description: "Three-letter metal symbol, e.g. XAU for gold"
+      example: "XAU"
+    MetalUnit:
+      type: "string"
+      description: "Handle for a unit of mass that metal prices can be quoted in"
+      enum: [gram, kilogram, metric_tonne, grain, pennyweight, oz_t, lb_t, oz_av, lb_av, tael, baht, tola]
+    MetalCategory:
+      type: "string"
+      description: "Whether the metal is a precious or a base metal"
+      enum: [precious_metal, base_metal]
+    MetalInstrumentType:
+      type: "string"
+      description: "spot is priced in a currency, crypto in a cryptocurrency, and ratio against another metal. A ratio has no unit of mass."
+      enum: [spot, crypto, ratio]
+    MetalInstrumentList:
+      type: "string"
+      pattern: "[A-Z]{6,7}(,[A-Z]{6,7})*"
+      description: "A comma-separated list of metals instrument symbols"
+      example: "XAUUSD,XAGUSD"
+    MetalPurityCode:
+      type: "string"
+      description: "A purity code from /metals/purities (e.g. '750'), or any custom fineness in parts per thousand between 1 and 1000. A custom value is echoed back with a purity_name of 'custom'."
+      example: "750"
+    VerboseFlag:
+      type: "string"
+      description: "Truthy values are true, 1, yes and y. Anything else is treated as false."
+      example: "true"
+    MetalPrice:
+      type: "string"
+      description: "A price, as a string to preserve the significant figures of the source quote. Parse as a decimal rather than a float where precision matters."
+      example: "2500.50"
+    MetalQuote:
+      type: object
+      description: >-
+        A single instrument quote, exactly as the feed supplies it. ask, mid and spread
+        are absent when the feed has published no ask for the instrument.
+      properties:
+        bid:
+          $ref: "#/components/schemas/MetalPrice"
+        ask:
+          $ref: "#/components/schemas/MetalPrice"
+        mid:
+          $ref: "#/components/schemas/MetalPrice"
+        spread:
+          $ref: "#/components/schemas/MetalPrice"
+        tsp:
+          $ref: "#/components/schemas/TimestampMillis"
+        dtm:
+          type: string
+          description: "Quote time, formatted per the account's datetime format"
+        metal:
+          $ref: "#/components/schemas/MetalSymbol"
+        metal_name:
+          type: string
+          description: "Metal name. Verbose only."
+        target:
+          type: string
+          pattern: "[A-Z0-9]{3,6}"
+          description: "What the instrument is priced against"
+        target_name:
+          type: string
+          description: "Display name for the target. Verbose only."
+        unit:
+          $ref: "#/components/schemas/MetalUnit"
+          description: "Unit of mass quoted. Absent for a ratio instrument, which has no unit."
+        unit_name:
+          type: string
+          description: "Display name for the unit. Verbose only, and absent for a ratio."
+        purity:
+          type: string
+          description: "Purity code the instrument is quoted at. Precious metals only."
+        cross_rate:
+          type: boolean
+          description: "Always false here - this endpoint applies no conversion"
+      required:
+        - bid
+        - tsp
+        - dtm
+        - metal
+        - target
+        - cross_rate
+    MetalSpot:
+      type: object
+      description: >-
+        A spot price converted to the requested currency, unit and purity. The *_name
+        fields appear only when verbose is set. grade fields appear for base metals,
+        purity fields for precious metals.
+      properties:
+        bid:
+          $ref: "#/components/schemas/MetalPrice"
+        ask:
+          $ref: "#/components/schemas/MetalPrice"
+        mid:
+          $ref: "#/components/schemas/MetalPrice"
+        spread:
+          $ref: "#/components/schemas/MetalPrice"
+        metal:
+          $ref: "#/components/schemas/MetalSymbol"
+        metal_name:
+          type: string
+          description: "Metal name. Verbose only."
+        currency:
+          $ref: "#/components/schemas/Currency"
+        currency_name:
+          type: string
+          description: "Currency name. Verbose only."
+        unit:
+          $ref: "#/components/schemas/MetalUnit"
+        unit_name:
+          type: string
+          description: "Display name for the unit. Verbose only."
+        tsp:
+          $ref: "#/components/schemas/TimestampMillis"
+        dtm:
+          type: string
+          description: "Quote time, formatted per the account's datetime format"
+        cross_rate:
+          type: boolean
+          description: "True when the price was crossed via USD rather than quoted directly in the requested currency"
+        source:
+          type: string
+          description: "Origin of the price data"
+        source_instrument:
+          type: string
+          description: "The instrument actually quoted to build this price"
+        grade:
+          type: string
+          description: "Deliverable contract grade. Base metals only."
+        grade_name:
+          type: string
+          description: "Display name for the contract grade. Base metals only, verbose only."
+        grade_min_purity_pct:
+          type: number
+          format: float
+          description: "Minimum purity of the contract grade, as a percentage. Base metals only, verbose only."
+        purity:
+          type: string
+          description: "Purity code the price is quoted at. Precious metals only."
+        purity_name:
+          type: string
+          description: "Display name for the purity, or 'custom' for a caller-supplied fineness. Precious metals only."
+      required:
+        - bid
+        - metal
+        - currency
+        - unit
+        - tsp
+        - dtm
+        - cross_rate
+        - source
+        - source_instrument
+    MetalPurity:
+      type: object
+      description: "A purity grade a metal is dealt in."
+      properties:
+        code:
+          type: string
+          description: "Identifies the grade within its metal. The fineness with any trailing zero dropped."
+        name:
+          type: string
+          description: "Display name for the grade"
+        fineness:
+          type: string
+          description: "Parts per thousand, as a string to preserve precision. Multiply by fineness/1000 to value an alloy."
+      example:
+        code: "925"
+        name: Sterling
+        fineness: "925.0"
+    MetalInstrument:
+      type: object
+      description: "A tradeable metals instrument."
+      properties:
+        symbol:
+          type: string
+          pattern: "[A-Z]{6,7}"
+          description: "Instrument symbol, repeating the key so the entry stands alone"
+        alt:
+          type: string
+          description: "Slash-separated form of the symbol, split after the leading metal code"
+        metal:
+          $ref: "#/components/schemas/MetalSymbol"
+        name:
+          type: string
+          description: "Metal name"
+        category:
+          $ref: "#/components/schemas/MetalCategory"
+        grade:
+          type: string
+          description: "Deliverable contract grade. Base metals only."
+        grade_name:
+          type: string
+          description: "Display name for the contract grade. Base metals only."
+        grade_min_purity_pct:
+          type: number
+          format: float
+          description: "Minimum purity of the contract grade, as a percentage. Base metals only."
+        target:
+          type: string
+          pattern: "[A-Z0-9]{3,6}"
+          description: "What the metal is priced against - a currency, a cryptocurrency, or another metal for a ratio"
+        target_name:
+          type: string
+          description: "Display name for the target"
+        unit:
+          $ref: "#/components/schemas/MetalUnit"
+        unit_name:
+          type: string
+          description: "Display name for the unit of mass"
+        purity:
+          type: string
+          description: "Purity grade code the instrument is quoted at, as per /metals/purities. Precious metals only."
+        type:
+          $ref: "#/components/schemas/MetalInstrumentType"
+      example:
+        symbol: XAUUSD
+        alt: XAU/USD
+        metal: XAU
+        name: Gold
+        category: precious_metal
+        target: USD
+        target_name: United States Dollar
+        unit: oz_t
+        unit_name: Troy Ounce
+        type: spot
+        purity: "1000"
     ResponseTime:
       type: number
       format: int32
@@ -2003,6 +2680,22 @@ components:
       format: int64
       description: "Milliseconds since Jan 1 1970 (unix timestamp with millisecond precision)"
       example: 1739305030072
+    FxQuotePrice:
+      type: "string"
+      description: >-
+        A bid or ask price, serialised as a JSON string so the exact precision of the
+        source quote is preserved. Parse as a decimal rather than a float where precision
+        matters. Deliberately kept separate from the metals price type so the two can
+        evolve independently.
+      example: "1.13087"
+    TimestampMillisString:
+      type: string
+      pattern: "[0-9]+"
+      description: >-
+        Milliseconds since Jan 1 1970, serialised as a JSON string. Retained as-is on
+        /fx/quote so existing integrations keep working; newer endpoints emit a number
+        (see TimestampMillis).
+      example: "1739305030072"
     IsoDateTimeZone:
       type: string
       pattern: "[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(Z?|[+-][0-9]{2}:00)"
