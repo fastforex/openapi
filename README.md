@@ -1,4 +1,4 @@
-# fastFOREX OpenAPI
+# fastFOREX API OpenAPI Spec
 
 Real-time currency data API for 160+ currencies, 500+ crypto, 2,300+ FX pairs, Gold, Silver and 7+ more metals. Fast, simple, reliable.
 

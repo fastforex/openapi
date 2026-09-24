@@ -1,8 +1,8 @@
 openapi: "3.0.3"
 info:
-  title: "fastFOREX.io"
-  version: "2.4.0"
-  description: "Foreign & cryptocurrency exchange rate API"
+  title: "fastFOREX API"
+  version: "2.4.3"
+  description: "Exchange rate API including historical Currency data, real time Gold, Metals and Crypto. JSON or WebSockets."
   termsOfService: "https://www.fastforex.io/terms-of-sale"
   contact:
     email: "support@fastforex.io"
@@ -40,21 +40,34 @@ paths:
         - "plan-one"
         - "plan-extra"
         - "plan-premium"
-      description: "Fetch a single currency exchange rate, from and to any supported physical or digital currency. Midpoint spot rate."
+      description: >-
+        Fetch a single currency exchange rate, from and to any supported physical or 
+        digital currency. Midpoint spot rate.
+
+
+        We also support metals (Gold, Silver, etc.) against physical currencies. 
+        e.g. XAU => USD.
+        
+        
+        We don't yet support crypto-metal rates here.
       parameters:
         - name: "from"
           in: "query"
-          description: "Base currency symbol (physical or digital), defaults to USD"
+          description: "Base currency symbol (physical, crypto or metal), defaults to USD"
           required: false
           allowEmptyValue: true
           schema:
-            $ref: "#/components/schemas/AnyCurrency"
+            oneOf:
+              - $ref: "#/components/schemas/AnyCurrency"
+              - $ref: "#/components/schemas/MetalSymbol"
         - name: "to"
           in: "query"
-          description: "Target currency symbol (physical or digital), defaults to USD"
+          description: "Target currency symbol (physical, crypto or metal), defaults to USD"
           required: true
           schema:
-            $ref: "#/components/schemas/AnyCurrency"
+            oneOf:
+              - $ref: "#/components/schemas/AnyCurrency"
+              - $ref: "#/components/schemas/MetalSymbol"
       responses:
         "200":
           description: "Success"
@@ -97,18 +110,30 @@ paths:
         - "plan-one"
         - "plan-extra"
         - "plan-premium"
-      description: "Fetch multiple target exchange rates from a single source currency. Midpoint spot rates."
+      description: >-
+        Fetch multiple target exchange rates from a single source currency in a single endpoint. 
+        Returns midpoint spot rates.
+
+
+        We also support metals (Gold, Silver, etc.) to multiple physical currencies. 
+        e.g. XAU => USD,GBP,CHF.
+        
+        
+        When using this endpoint with metals, each target currency and further cross-rate conversions 
+        count as 1x additional API call.
       parameters:
         - name: "from"
           in: "query"
-          description: "Base currency 3-letter symbol, defaults to USD"
+          description: "Base currency 3-letter symbol, defaults to USD. Supports physical currencies and metals."
           required: false
           allowEmptyValue: true
           schema:
-            $ref: "#/components/schemas/Currency"
+            oneOf:
+              - $ref: "#/components/schemas/Currency"
+              - $ref: "#/components/schemas/MetalSymbol"
         - name: "to"
           in: "query"
-          description: "Target currencies, comma separated list of 3-letter symbols"
+          description: "Target physical currencies, comma separated list of 3-letter symbols"
           required: true
           schema:
             $ref: "#/components/schemas/CurrencyList"
@@ -186,167 +211,176 @@ paths:
               example:
                 base: USD
                 results:
-                  AED: 3.673
-                  AFN: 72.5642
-                  ALL: 88.59
-                  AMD: 391.07
+                  AED: 3.6733
+                  AFN: 64.7763
+                  ALL: 79.87
+                  AMD: 363.46
                   ANG: 1.788
-                  AOA: 912
-                  ARS: 1074.69
-                  AUD: 1.5892
-                  AWG: 1.81
+                  AOA: 913
+                  ARS: 1514.003
+                  AUD: 1.4053
+                  AWG: 1.8098
                   AZN: 1.7
-                  BAM: 1.7217
+                  BAM: 1.7077
                   BBD: 2
-                  BDT: 121.81
-                  BGN: 1.7219
-                  BHD: 0.37708
-                  BIF: 2923.15
+                  BDT: 122.87
+                  BGN: 1.665
+                  BHD: 0.377
+                  BIF: 2995.77
                   BMD: 1
-                  BND: 1.3194
-                  BOB: 6.94
-                  BRL: 5.8742
-                  BRX: 5.8734
-                  BSD: 1.003
-                  BWP: 14.0056
-                  BYN: 3.28
+                  BND: 1.2751
+                  BOB: 11.93
+                  BRL: 5.1196
+                  BRX: 5.1114
+                  BSD: 1
+                  BTN: 95.5257
+                  BWP: 13.2275
+                  BYN: 3.03
                   BZD: 2.0178
-                  CAD: 1.38642
-                  CDF: 2859.46
-                  CHF: 0.81519
-                  CLF: 0.02495
-                  CLP: 971.76
-                  CNH: 7.28156
-                  CNY: 7.2916
-                  COP: 4277.27
-                  COU: 10.6753
-                  CRC: 508.43
+                  CAD: 1.40527
+                  CDF: 2272.75
+                  CHF: 0.82016
+                  CLF: 0.02304
+                  CLP: 944.74
+                  CNH: 6.6979
+                  CNY: 6.699
+                  COP: 3205.58
+                  COU: 7.6609
+                  CRC: 450.27
                   CUP: 24
-                  CVE: 96.88
-                  CZK: 22.1127
-                  DJF: 177.405
-                  DKK: 6.57264
-                  DOP: 61.33
-                  DZD: 131.969
-                  EGP: 51.3229
-                  ERN: 15.15
-                  ETB: 130.47
-                  EUR: 0.8799
-                  FJD: 2.283
-                  FKP: 0.7659
-                  GBP: 0.76423
-                  GEL: 2.7573
-                  GHS: 15.4527
-                  GIP: 0.7659
-                  GMD: 72
-                  GNF: 8664
-                  GTQ: 7.709
-                  GYD: 210.19
-                  HKD: 7.7537
-                  HNL: 25.7132
-                  HTG: 132.88
-                  HUF: 360.62
-                  HUX: 370.54
-                  IDR: 16794
-                  ILS: 3.704
-                  INR: 86.118
-                  IQD: 1310
-                  IRR: 42003
-                  ISK: 127.9
-                  JMD: 157.71
-                  JOD: 0.709
-                  JPY: 143.525
-                  KES: 129.78
-                  KGS: 87.45
-                  KHR: 4000
-                  KMF: 454.5
+                  CVE: 96.35
+                  CZK: 21.2497
+                  DJF: 178.474
+                  DKK: 6.52689
+                  DOP: 59.32
+                  DZD: 134.173
+                  EGP: 51.6192
+                  ERN: 15.13
+                  ETB: 161
+                  EUR: 0.873096
+                  FJD: 2.2382
+                  FKP: 0.7485
+                  GBP: 0.748523
+                  GEL: 2.6074
+                  GGP: 0.748523
+                  GHS: 11.5227
+                  GIP: 0.7485
+                  GMD: 74.38
+                  GNF: 8840
+                  GTQ: 7.63
+                  GYD: 208.79
+                  HKD: 7.84325
+                  HNL: 26.9062
+                  HTG: 130.687
+                  HUF: 315.549
+                  HUX: 317.46
+                  IDR: 17792.2
+                  ILS: 3.01613
+                  IMP: 0.748523
+                  INR: 95.5257
+                  IQD: 1310.52
+                  IRR: 1375205.25
+                  ISK: 120.83
+                  JEP: 0.748523
+                  JMD: 157.14
+                  JOD: 0.7088
+                  JPY: 157.27
+                  KES: 129.43
+                  KGS: 87.485
+                  KHR: 4055
+                  KMF: 429.89
                   KPW: 900
-                  KRW: 1421.365
-                  KWD: 0.307
+                  KRW: 1353.885
+                  KWD: 0.30887
                   KYD: 0.82
-                  KZT: 518.06
-                  LAK: 21557
-                  LBP: 89600
-                  LKR: 298.1
-                  LRD: 199.926
-                  LSL: 19.37
-                  LYD: 5.5571
-                  MAD: 9.3176
-                  MDL: 17.7
-                  MGA: 4655
-                  MKD: 54.257
-                  MMK: 2098.68
-                  MNT: 3537.2
-                  MOP: 7.9863
-                  MRU: 39.9
-                  MUR: 43.7
+                  KZT: 447.05
+                  LAK: 22314
+                  LBP: 89500
+                  LKR: 329.4
+                  LRD: 172.63
+                  LSL: 16.26
+                  LYD: 6.3724
+                  MAD: 9.5588
+                  MDL: 17.5
+                  MGA: 4395
+                  MKD: 53.66
+                  MMK: 2099.68
+                  MNT: 3598.95
+                  MOP: 8.0786
+                  MRU: 40.4
+                  MUR: 47.2164
                   MVR: 15.46
-                  MWK: 1733.673
-                  MXN: 20.321
-                  MXV: 2.42005
-                  MYR: 4.423
-                  MZN: 63.56
-                  NAD: 19.1599
-                  NGN: 1597.115
+                  MWK: 1733.674
+                  MXN: 17.2527
+                  MXV: 1.95517
+                  MYR: 4.074
+                  MZN: 63.55
+                  NAD: 16.2119
+                  NGN: 1323.84
                   NIO: 36.6243
-                  NOK: 10.65512
-                  NPR: 137.673
-                  NZD: 1.7164
+                  NOK: 9.4353
+                  NPR: 153.029
+                  NZD: 1.744
                   OMR: 0.3851
                   PAB: 1
-                  PEN: 3.7286
-                  PGK: 4.1144
-                  PHP: 57.241
-                  PKR: 280.34
-                  PLN: 3.7742
-                  PYG: 8027.64
+                  PEN: 3.3727
+                  PGK: 4.3516
+                  PHP: 62.3605
+                  PKR: 277.03
+                  PLN: 3.79839
+                  PYG: 5943.28
                   QAR: 3.641
-                  RON: 4.38927
-                  RSD: 103.229
-                  RUB: 83.3
-                  RWF: 1410.28
-                  SAR: 3.7542
-                  SBD: 8.3542
-                  SCR: 14.8351
-                  SDG: 598.993
-                  SEK: 9.77129
-                  SGD: 1.31896
-                  SHP: 0.7659
-                  SLL: 22663.6
-                  SOS: 566.75
-                  SRD: 36.72
-                  SSP: 4471.077
-                  STN: 21.6
+                  RON: 4.60625
+                  RSD: 102.507
+                  RUB: 84.3139
+                  RWF: 1473.17
+                  SAR: 3.75523
+                  SBD: 8.0257
+                  SCR: 14.8611
+                  SDG: 600.221
+                  SEK: 9.834
+                  SGD: 1.27507
+                  SHP: 0.7485
+                  SLE: 24.65
+                  SLL: 22871.2
+                  SOS: 571.65
+                  SRD: 37.81
+                  SSP: 5713.292
+                  STN: 21.4
                   SVC: 8.75
-                  SYP: 13002
-                  SZL: 19.1043
-                  THB: 33.515
-                  TJS: 10.894
+                  SYP: 121.53
+                  SZL: 16.2166
+                  THB: 33.126
+                  TJS: 9.2509
                   TMT: 3.5
-                  TND: 2.9815
-                  TOP: 2.401
-                  TRY: 38.0582
-                  TTD: 6.8191
-                  TWD: 32.409
-                  TZS: 2660
-                  UAH: 41.5281
-                  UGX: 3675.3
-                  UYU: 42.984
-                  UZS: 12980.33
-                  VES: 77.0767
-                  VND: 25720
-                  VUV: 122.93
-                  WST: 2.6969
-                  XAF: 577.42
+                  TND: 2.9562
+                  TOP: 2.377
+                  TRY: 48.8197
+                  TTD: 6.7734
+                  TWD: 31.624
+                  TZS: 2623
+                  UAH: 44.7586
+                  UGX: 3935.2
+                  USD: 1
+                  UYU: 40.114
+                  UZS: 11802.19
+                  VED: 850.291
+                  VES: 850.291
+                  VND: 26018
+                  VUV: 117.76
+                  WST: 2.7525
+                  XAF: 572.73
                   XCD: 2.7
-                  XDR: 0.73954
-                  XOF: 577.42
-                  XPF: 104.95
-                  YER: 245.27
-                  ZAR: 19.1345
-                  ZMW: 28.3
-                updated: '2025-04-11T23:59:53Z'
-                ms: 77
+                  XCG: 1.797
+                  XDR: 0.73282
+                  XOF: 572.73
+                  XPF: 104.3
+                  YER: 236.53
+                  ZAR: 16.2141
+                  ZMW: 19.6
+                  ZWG: 26.6588
+                updated: '2026-09-22T13:59:24Z'
+                ms: 14
         "400":
           description: "Bad Request"
         "401":
@@ -692,6 +726,7 @@ paths:
                   FKP: 0.73605
                   GBP: 0.73605
                   GEL: 3.30208
+                  GGP: 0.73605
                   GHS: 5.78235
                   GIP: 0.73605
                   GMD: 51.76064
@@ -705,10 +740,12 @@ paths:
                   HUF: 298.21139
                   IDR: 14054.17341
                   ILS: 3.2719
+                  IMP: 0.73605
                   INR: 73.16164
                   IQD: 1458.41307
                   IRR: 42031.79744
                   ISK: 129.4936
+                  JEP: 0.73605
                   JMD: 144.24702
                   JOD: 0.70779
                   JPY: 103.87016
@@ -784,6 +821,8 @@ paths:
                   USD: 1
                   UYU: 42.4356
                   UZS: 10493.30193
+                  VED: 1497710
+                  VES: 1497710
                   VND: 23216.10481
                   VUV: 107.05138
                   WST: 2.54085
@@ -899,7 +938,7 @@ paths:
         - "plan-one"
         - "plan-extra"
         - "plan-premium"
-      description: "Fetch a list of 160+ supported currencies with symbols. Also see /crypto/currencies"
+      description: "Fetch a list of 160+ supported currencies with symbols. Also see /crypto/currencies and /metals/list"
       responses:
         "200":
           description: "Success"
@@ -912,7 +951,7 @@ paths:
                     $ref: "#/components/schemas/ResponseTime"
                   currencies:
                     type: object
-                    minProperties: 130
+                    minProperties: 160
                     additionalProperties:
                       type: string
               example:
@@ -921,7 +960,7 @@ paths:
                   AFN: Afghan Afghani
                   ALL: Albanian Lek
                   AMD: Armenian Dram
-                  ANG: Dutch Guilders
+                  ANG: Netherlands Antillean Guilder
                   AOA: Angolan Kwanza
                   ARS: Argentine Peso
                   AUD: Australian Dollar
@@ -955,7 +994,7 @@ paths:
                   CRC: Costa Rican Colon
                   CUP: Cuban Peso
                   CVE: Cape Verdean Escudo
-                  CZK: Czech Republic Koruna
+                  CZK: Czech Koruna
                   DJF: Djiboutian Franc
                   DKK: Danish Krone
                   DOP: Dominican Peso
@@ -968,12 +1007,13 @@ paths:
                   FKP: Falkland Islands Pound
                   GBP: British Pound Sterling
                   GEL: Georgian Lari
+                  GGP: Guernsey Pound
                   GHS: Ghanaian Cedi
                   GIP: Gibraltar Pound
                   GMD: Gambian Dalasi
                   GNF: Guinean Franc
                   GTQ: Guatemalan Quetzal
-                  GYD: Guyanaese Dollar
+                  GYD: Guyanese Dollar
                   HKD: Hong Kong Dollar
                   HNL: Honduran Lempira
                   HRK: Croatian Kuna
@@ -982,15 +1022,17 @@ paths:
                   HUX: Hungarian Forint Official Rate
                   IDR: Indonesian Rupiah
                   ILS: Israeli New Sheqel
+                  IMP: Manx Pound
                   INR: Indian Rupee
                   IQD: Iraqi Dinar
                   IRR: Iranian Rial
                   ISK: Icelandic Krona
+                  JEP: Jersey Pound
                   JMD: Jamaican Dollar
                   JOD: Jordanian Dinar
                   JPY: Japanese Yen
                   KES: Kenyan Shilling
-                  KGS: Kyrgystani Som
+                  KGS: Kyrgyzstani Som
                   KHR: Cambodian Riel
                   KMF: Comorian Franc
                   KPW: North Korean Won
@@ -1002,13 +1044,13 @@ paths:
                   LBP: Lebanese Pound
                   LKR: Sri Lankan Rupee
                   LRD: Liberian Dollar
-                  LSL: Lesotho Maloti
+                  LSL: Lesotho Loti
                   LYD: Libyan Dinar
                   MAD: Moroccan Dirham
                   MDL: Moldovan Leu
                   MGA: Malagasy Ariary
                   MKD: Macedonian Denar
-                  MMK: Myanma Kyat
+                  MMK: Myanmar Kyat
                   MNT: Mongolian Tugrik
                   MOP: Macanese Pataca
                   MRU: Mauritanian Ouguiya
@@ -1027,7 +1069,7 @@ paths:
                   NZD: New Zealand Dollar
                   OMR: Omani Rial
                   PAB: Panamanian Balboa
-                  PEN: Peruvian Nuevo Sol
+                  PEN: Peruvian Sol
                   PGK: Papua New Guinean Kina
                   PHP: Philippine Peso
                   PKR: Pakistani Rupee
@@ -1045,14 +1087,15 @@ paths:
                   SEK: Swedish Krona
                   SGD: Singapore Dollar
                   SHP: Saint Helena Pound
-                  SLL: Sierra Leonean Leone
+                  SLE: Sierra Leonean Leone
+                  SLL: Sierra Leonean Leone (pre-2022)
                   SOS: Somali Shilling
                   SRD: Surinamese Dollar
                   SSP: South Sudanese Pound
                   STN: Sao Tomean Dobra
                   SVC: Salvadoran Colon
                   SYP: Syrian Pound
-                  SZL: Swazi Emalangeni
+                  SZL: Eswatini Lilangeni
                   THB: Thai Baht
                   TJS: Tajikistani Somoni
                   TMT: Turkmenistani Manat
@@ -1060,25 +1103,28 @@ paths:
                   TOP: Tongan Pa'anga
                   TRY: Turkish Lira
                   TTD: Trinidad and Tobago Dollar
-                  TWD: Taiwan New Dollar
+                  TWD: New Taiwan Dollar
                   TZS: Tanzanian Shilling
                   UAH: Ukrainian Hryvnia
                   UGX: Ugandan Shilling
                   USD: United States Dollar
                   UYU: Uruguayan Peso
                   UZS: Uzbekistan Som
+                  VED: Venezuelan Bolivar
                   VES: Venezuelan Bolivar
                   VND: Vietnamese Dong
-                  VUV: Ni-Vanuatu Vatu
+                  VUV: Vanuatu Vatu
                   WST: Samoan Tala
                   XAF: CFA Franc BEAC
                   XCD: East Caribbean Dollar
+                  XCG: Caribbean Guilder
                   XDR: Special Drawing Rights
                   XOF: CFA Franc BCEAO
                   XPF: CFP Franc
                   YER: Yemeni Rial
                   ZAR: South African Rand
                   ZMW: Zambian Kwacha
+                  ZWG: Zimbabwe Gold
                 ms: 3
         "400":
           description: "Bad Request"
@@ -1131,7 +1177,7 @@ paths:
         - "plan-one"
         - "plan-extra"
         - "plan-premium"
-      description: "Fetch a list of 400+ supported cryptocurrency pairs"
+      description: "Fetch a list of 750+ supported cryptocurrency pairs"
       responses:
         "200":
           description: "Success"
@@ -1144,7 +1190,7 @@ paths:
                     $ref: "#/components/schemas/ResponseTime"
                   pairs:
                     type: object
-                    minProperties: 400
+                    minProperties: 750
                     additionalProperties:
                       $ref: "#/components/schemas/AnyCurrencyPair"
               example:
@@ -1415,12 +1461,13 @@ paths:
                   FKP: Falkland Islands Pound
                   GBP: British Pound Sterling
                   GEL: Georgian Lari
+                  GGP: Guernsey Pound
                   GHS: Ghanaian Cedi
                   GIP: Gibraltar Pound
                   GMD: Gambian Dalasi
                   GNF: Guinean Franc
                   GTQ: Guatemalan Quetzal
-                  GYD: Guyanaese Dollar
+                  GYD: Guyanese Dollar
                   HKD: Hong Kong Dollar
                   HNL: Honduran Lempira
                   HRK: Croatian Kuna
@@ -1429,15 +1476,17 @@ paths:
                   HUX: Hungarian Forint Official Rate
                   IDR: Indonesian Rupiah
                   ILS: Israeli New Sheqel
+                  IMP: Manx Pound
                   INR: Indian Rupee
                   IQD: Iraqi Dinar
                   IRR: Iranian Rial
                   ISK: Icelandic Krona
+                  JEP: Jersey Pound
                   JMD: Jamaican Dollar
                   JOD: Jordanian Dinar
                   JPY: Japanese Yen
                   KES: Kenyan Shilling
-                  KGS: Kyrgystani Som
+                  KGS: Kyrgyzstani Som
                   KHR: Cambodian Riel
                   KMF: Comorian Franc
                   KPW: North Korean Won
@@ -1514,6 +1563,7 @@ paths:
                   USD: United States Dollar
                   UYU: Uruguayan Peso
                   UZS: Uzbekistan Som
+                  VED: Venezuelan Bolivar
                   VES: Venezuelan Bolivar
                   VND: Vietnamese Dong
                   VUV: Ni-Vanuatu Vatu
@@ -2506,7 +2556,6 @@ components:
           description: "Display name for the target. Verbose only."
         unit:
           $ref: "#/components/schemas/MetalUnit"
-          description: "Unit of mass quoted. Absent for a ratio instrument, which has no unit."
         unit_name:
           type: string
           description: "Display name for the unit. Verbose only, and absent for a ratio."
@@ -2754,7 +2803,7 @@ components:
       type: http
       scheme: basic
 externalDocs:
-  description: "Find out more about fastFOREX.io"
+  description: "Find out more about fastFOREX API"
   url: "https://www.fastforex.io"
 x-samples-languages:
   - curl
