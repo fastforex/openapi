@@ -1,7 +1,7 @@
 openapi: "3.0.3"
 info:
   title: "fastFOREX API"
-  version: "2.4.3"
+  version: "2.4.4"
   description: "Exchange rate API including historical Currency data, real time Gold, Metals and Crypto. JSON or WebSockets."
   termsOfService: "https://www.fastforex.io/terms-of-sale"
   contact:
@@ -260,6 +260,7 @@ paths:
                   EUR: 0.873096
                   FJD: 2.2382
                   FKP: 0.7485
+                  FOK: 6.52689
                   GBP: 0.748523
                   GEL: 2.6074
                   GGP: 0.748523
@@ -288,6 +289,7 @@ paths:
                   KES: 129.43
                   KGS: 87.485
                   KHR: 4055
+                  KID: 1.4053
                   KMF: 429.89
                   KPW: 900
                   KRW: 1353.885
@@ -357,6 +359,7 @@ paths:
                   TOP: 2.377
                   TRY: 48.8197
                   TTD: 6.7734
+                  TVD: 1.4053
                   TWD: 31.624
                   TZS: 2623
                   UAH: 44.7586
@@ -724,6 +727,7 @@ paths:
                   EUR: 0.82791
                   FJD: 2.05329
                   FKP: 0.73605
+                  FOK: 6.15612
                   GBP: 0.73605
                   GEL: 3.30208
                   GGP: 0.73605
@@ -752,6 +756,7 @@ paths:
                   KES: 109.70116
                   KGS: 75.50493
                   KHR: 4047.84337
+                  KID: 1.29806
                   KMF: 406.08715
                   KPW: 900.13249
                   KRW: 1102.13455
@@ -814,6 +819,7 @@ paths:
                   TOP: 2.27536
                   TRY: 7.45083
                   TTD: 6.74407
+                  TVD: 1.29806
                   TWD: 28.03621
                   TZS: 2317.83454
                   UAH: 28.17938
@@ -938,7 +944,7 @@ paths:
         - "plan-one"
         - "plan-extra"
         - "plan-premium"
-      description: "Fetch a list of 160+ supported currencies with symbols. Also see /crypto/currencies and /metals/list"
+      description: "Fetch a list of 170+ supported currencies with symbols. Also see /crypto/currencies and /metals/list"
       responses:
         "200":
           description: "Success"
@@ -951,7 +957,7 @@ paths:
                     $ref: "#/components/schemas/ResponseTime"
                   currencies:
                     type: object
-                    minProperties: 160
+                    minProperties: 170
                     additionalProperties:
                       type: string
               example:
@@ -1005,6 +1011,7 @@ paths:
                   EUR: Euro
                   FJD: Fijian Dollar
                   FKP: Falkland Islands Pound
+                  FOK: Faroese Krona
                   GBP: British Pound Sterling
                   GEL: Georgian Lari
                   GGP: Guernsey Pound
@@ -1034,6 +1041,7 @@ paths:
                   KES: Kenyan Shilling
                   KGS: Kyrgyzstani Som
                   KHR: Cambodian Riel
+                  KID: Kiribati Dollar
                   KMF: Comorian Franc
                   KPW: North Korean Won
                   KRW: South Korean Won
@@ -1103,6 +1111,7 @@ paths:
                   TOP: Tongan Pa'anga
                   TRY: Turkish Lira
                   TTD: Trinidad and Tobago Dollar
+                  TVD: Tuvaluan Dollar
                   TWD: New Taiwan Dollar
                   TZS: Tanzanian Shilling
                   UAH: Ukrainian Hryvnia
@@ -1459,6 +1468,7 @@ paths:
                   EUR: Euro
                   FJD: Fijian Dollar
                   FKP: Falkland Islands Pound
+                  FOK: Faroese Krona
                   GBP: British Pound Sterling
                   GEL: Georgian Lari
                   GGP: Guernsey Pound
@@ -1488,6 +1498,7 @@ paths:
                   KES: Kenyan Shilling
                   KGS: Kyrgyzstani Som
                   KHR: Cambodian Riel
+                  KID: Kiribati Dollar
                   KMF: Comorian Franc
                   KPW: North Korean Won
                   KRW: South Korean Won
@@ -1556,6 +1567,7 @@ paths:
                   TOP: Tongan Pa'anga
                   TRY: Turkish Lira
                   TTD: Trinidad and Tobago Dollar
+                  TVD: Tuvaluan Dollar
                   TWD: Taiwan New Dollar
                   TZS: Tanzanian Shilling
                   UAH: Ukrainian Hryvnia
