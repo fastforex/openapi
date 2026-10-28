@@ -1,7 +1,7 @@
 openapi: "3.0.3"
 info:
   title: "fastFOREX API"
-  version: "2.4.4"
+  version: "2.6.0"
   description: "Exchange rate API including historical Currency data, real time Gold, Metals and Crypto. JSON or WebSockets."
   termsOfService: "https://www.fastforex.io/terms-of-sale"
   contact:
@@ -2366,6 +2366,300 @@ paths:
           description: "Rate limit exceeded"
         "500":
           description: "Upstream price data unavailable"
+  /metals/quote/time-series:
+    get:
+      tags:
+        - "metals"
+        - "plan-premium"
+      description: "bid/ask time-series data for a given Metals instrument and interval. Values are the closing bid/ask for the interval. Supports a range of datetime formats and timezone offsets. Datetime format in the response will try to match your request - unless specified explicitly."
+      parameters:
+        - name: "instrument"
+          in: "query"
+          description: "Metal instrument symbol, such as XAUUSD"
+          required: true
+          schema:
+            $ref: "#/components/schemas/MetalInstrumentSymbol"
+        - name: "start"
+          in: "query"
+          description: "Time-series start. Supported formats: YYYY-MM-DD (UTC). YYYY-MM-DD HH:MM:SS (UTC), ISO8601 with timezone offset. Timestamp in milliseconds. Supply this or end."
+          required: false
+          schema:
+            $ref: "#/components/schemas/DateOrDateTime"
+        - name: "end"
+          in: "query"
+          description: "Time-series end. Supported formats: YYYY-MM-DD (UTC). YYYY-MM-DD HH:MM:SS (UTC), ISO8601 with timezone offset. Timestamp in milliseconds. Supply this or start."
+          required: false
+          schema:
+            $ref: "#/components/schemas/DateOrDateTime"
+        - name: dtmfmt
+          in: "query"
+          description: "Desired datetime response format. Defaults to match your request. Can be [ISO] ISO8601 datetime including timezone offset, [TSP] UNIX Timestamp in milliseconds, or [UTCYMD] 'YYYY-MM-DD HH:MM:SS' (UTC)."
+          required: false
+          schema:
+            $ref: "#/components/schemas/DateTimeFormat"
+        - name: "interval"
+          in: "query"
+          description: "ISO8601 duration, such as P1D (daily). Defaults to P1D. Options are P1D, PT1H, PT1M."
+          required: false
+          schema:
+            $ref: "#/components/schemas/Duration"
+        - name: "limit"
+          in: "query"
+          description: "Maximum number of data points to return. Default varies upon duration."
+          required: false
+          schema:
+            type: number
+            format: int32
+            minimum: 1
+            maximum: 100
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  instrument:
+                    $ref: "#/components/schemas/MetalInstrumentSymbol"
+                  interval:
+                    $ref: "#/components/schemas/Duration"
+                  limit:
+                    type: number
+                    format: int32
+                  dtmfmt:
+                    $ref: "#/components/schemas/DateTimeFormat"
+                  start:
+                    $ref: "#/components/schemas/DateTimes"
+                  end:
+                    $ref: "#/components/schemas/DateTimes"
+                  tzOffset:
+                    type: string
+                    description: "Timezone offset. e.g. +00:00 or -05:00"
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        dtm:
+                          $ref: "#/components/schemas/DateTimes"
+                        bid:
+                          type: number
+                          format: float
+                        ask:
+                          type: number
+                          format: float
+                  ms:
+                    $ref: "#/components/schemas/ResponseTime"
+              example:
+                instrument: XAUUSD
+                interval: PT1M
+                limit: 60
+                dtmfmt: ISO
+                end: '2026-10-28T16:35:30Z'
+                tzOffset: "+00:00"
+                results:
+                  - dtm: '2026-10-28T15:39:00Z'
+                    bid: 4044.6
+                    ask: 4044.3
+                  - dtm: '2026-10-28T15:38:00Z'
+                    bid: 4043.84
+                    ask: 4044.16
+                  - dtm: '2026-10-28T15:37:00Z'
+                    bid: 4043.08
+                    ask: 4043.39
+                  - dtm: '2026-10-28T15:36:00Z'
+                    bid: 4043.33
+                    ask: 4043.63
+                ms: 5
+        "400":
+          description: "Bad Request"
+        "401":
+          description: "Not Authorized"
+        "403":
+          description: "Forbidden"
+        "429":
+          description: "Rate limit exceeded"
+  /metals/ohlc/time-series:
+    get:
+      tags:
+        - "metals"
+        - "plan-premium"
+      description: "Fetch a set of OHLC time-series data points for a given Metals instrument and interval. Values are based on the BID price. Supports a range of datetime formats and timezone offsets. Datetime format in the response will try to match your request - unless specified explicitly."
+      parameters:
+        - name: "instrument"
+          in: "query"
+          description: "Metal instrument symbol, such as XAUUSD"
+          required: true
+          schema:
+            $ref: "#/components/schemas/MetalInstrumentSymbol"
+        - name: "start"
+          in: "query"
+          description: "Time-series start. Supported formats: YYYY-MM-DD (UTC). YYYY-MM-DD HH:MM:SS (UTC), ISO8601 with timezone offset. Timestamp in milliseconds. Supply this or end."
+          required: false
+          schema:
+            $ref: "#/components/schemas/DateOrDateTime"
+        - name: "end"
+          in: "query"
+          description: "Time-series end. Supported formats: YYYY-MM-DD (UTC). YYYY-MM-DD HH:MM:SS (UTC), ISO8601 with timezone offset. Timestamp in milliseconds. Supply this or start."
+          required: false
+          schema:
+            $ref: "#/components/schemas/DateOrDateTime"
+        - name: dtmfmt
+          in: "query"
+          description: "Desired datetime response format. Defaults to match your request. Can be [ISO] ISO8601 datetime including timezone offset, [TSP] UNIX Timestamp in milliseconds, or [UTCYMD] 'YYYY-MM-DD HH:MM:SS' (UTC)."
+          required: false
+          schema:
+            $ref: "#/components/schemas/DateTimeFormat"
+        - name: "interval"
+          in: "query"
+          description: "ISO8601 duration, such as P1D (daily). Defaults to P1D. Options are P1D, PT1H, PT1M."
+          required: false
+          schema:
+            $ref: "#/components/schemas/Duration"
+        - name: "limit"
+          in: "query"
+          description: "Maximum number of data points to return. Default varies upon duration."
+          required: false
+          schema:
+            type: number
+            format: int32
+            minimum: 1
+            maximum: 100
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  instrument:
+                    $ref: "#/components/schemas/MetalInstrumentSymbol"
+                  interval:
+                    $ref: "#/components/schemas/Duration"
+                  limit:
+                    type: number
+                    format: int32
+                  dtmfmt:
+                    $ref: "#/components/schemas/DateTimeFormat"
+                  start:
+                    $ref: "#/components/schemas/DateTimes"
+                  end:
+                    $ref: "#/components/schemas/DateTimes"
+                  tzOffset:
+                    type: string
+                    description: "Timezone offset. e.g. +00:00 or -05:00"
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        dtm:
+                          $ref: "#/components/schemas/DateTimes"
+                        o:
+                          type: number
+                          format: float
+                        h:
+                          type: number
+                          format: float
+                        l:
+                          type: number
+                          format: float
+                        c:
+                          type: number
+                          format: float
+                  ms:
+                    $ref: "#/components/schemas/ResponseTime"
+              example:
+                instrument: XAUUSD
+                interval: PT1M
+                limit: 60
+                dtmfmt: ISO
+                end: '2026-10-28T16:36:38Z'
+                tzOffset: "+00:00"
+                results:
+                  - dtm: '2026-10-28T15:39:00Z'
+                    o: 4043.82
+                    h: 4044.6
+                    l: 4043.46
+                    c: 4044.6
+                  - dtm: '2026-10-28T15:38:00Z'
+                    o: 4043.09
+                    h: 4044.12
+                    l: 4042.98
+                    c: 4043.84
+                  - dtm: '2026-10-28T15:37:00Z'
+                    o: 4043.32
+                    h: 4043.66
+                    l: 4042.81
+                    c: 4043.08
+                  - dtm: '2026-10-28T15:36:00Z'
+                    o: 4042.84
+                    h: 4043.78
+                    l: 4042.84
+                    c: 4043.33
+                ms: 8
+        "400":
+          description: "Bad Request"
+        "401":
+          description: "Not Authorized"
+        "403":
+          description: "Forbidden"
+        "429":
+          description: "Rate limit exceeded"
+  /metals/instruments/historical-limits:
+    get:
+      tags:
+        - "metals"
+        - "plan-premium"
+      description: "Metals instruments earliest available historical data point for the supplied interval (P1D default)"
+      parameters:
+        - name: "interval"
+          in: "query"
+          description: "ISO8601 duration, such as P1D (daily). Defaults to P1D. Options are P1D, PT1H, PT1M."
+          required: false
+          schema:
+            $ref: "#/components/schemas/Duration"
+        - name: "price"
+          in: "query"
+          description: "bid or ask. Defaults to bid."
+          required: false
+          schema:
+            $ref: "#/components/schemas/PriceType"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ms:
+                    $ref: "#/components/schemas/ResponseTime"
+                  interval:
+                    $ref: "#/components/schemas/Duration"
+                  price:
+                    $ref: "#/components/schemas/PriceType"
+                  pairs:
+                    type: object
+                    minProperties: 40
+                    additionalProperties:
+                      $ref: "#/components/schemas/DateTimes"
+              example:
+                interval: P1D
+                price: bid
+                pairs:
+                  XAUAUD: 1995-03-26T23:00:00Z
+                  XAUCAD: 1995-03-26T23:00:00Z
+                  XAUCHF: 1995-03-26T23:00:00Z
+                ms: 8
+        "400":
+          description: "Bad Request"
+        "401":
+          description: "Not Authorized"
+        "429":
+          description: "Rate limit exceeded"
   /usage:
     get:
       tags:
@@ -2523,6 +2817,11 @@ components:
       pattern: "[A-Z]{6,7}(,[A-Z]{6,7})*"
       description: "A comma-separated list of metals instrument symbols"
       example: "XAUUSD,XAGUSD"
+    MetalInstrumentSymbol:
+      type: "string"
+      pattern: "[A-Z]{6,7}"
+      description: "A single metals instrument symbol"
+      example: "XAUUSD"
     MetalPurityCode:
       type: "string"
       description: "A purity code from /metals/purities (e.g. '750'), or any custom fineness in parts per thousand between 1 and 1000. A custom value is echoed back with a purity_name of 'custom'."
